@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CommandPulse · AI operations for multi-unit owners</title>
+<meta name="description" content="CommandPulse puts done-for-you AI agents on top of the systems you already run, then rolls your whole operation into one brief every morning. One pain, thirty days, one number.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ccircle%20cx='50'%20cy='50'%20r='48'%20fill='%232A44D8'/%3E%3Cpath%20d='M18%2053h13l6-17%209%2032%206-21%204%207h15'%20fill='none'%20stroke='%23E7CE92'%20stroke-width='7'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+
+  :root{
+    color-scheme:light dark;
+    /* brand */
+    --royal:#2A44D8; --royal-bri:#3E5BF0; --royal-deep:#0F1B63;
+    --gold:#9A7620; --gold-solid:#C69A3D; --gold-soft:#B98A2E;
+    /* neutrals (light default) */
+    --bg:#F4F5FB; --surf:#FFFFFF; --surf-2:#EDEFF7;
+    --text:#0B0E1A; --muted:#59617C; --line:rgba(11,14,26,.12); --line-2:rgba(11,14,26,.07);
+    /* semantic */
+    --good:#1C9A61; --warn:#B7801F; --crit:#CF5334;
+    /* type */
+    --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace;
+    --wrap:1160px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --royal:#3E5BF0; --royal-bri:#5D78FF; --royal-deep:#0C1550;
+      --gold:#D8B25A; --gold-solid:#D8B25A; --gold-soft:#ECD6A0;
+      --bg:#090B12; --surf:#0F121C; --surf-2:#161B29;
+      --text:#EBEEF7; --muted:#98A2BB; --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.06);
+      --good:#38B87F; --warn:#E0AE4A; --crit:#E76F4E;
+    }
+  }
+  :root[data-theme="light"]{
+    --royal:#2A44D8; --royal-bri:#3E5BF0; --royal-deep:#0F1B63;
+    --gold:#9A7620; --gold-solid:#C69A3D; --gold-soft:#B98A2E;
+    --bg:#F4F5FB; --surf:#FFFFFF; --surf-2:#EDEFF7;
+    --text:#0B0E1A; --muted:#59617C; --line:rgba(11,14,26,.12); --line-2:rgba(11,14,26,.07);
+    --good:#1C9A61; --warn:#B7801F; --crit:#CF5334;
+  }
+  :root[data-theme="dark"]{
+    --royal:#3E5BF0; --royal-bri:#5D78FF; --royal-deep:#0C1550;
+    --gold:#D8B25A; --gold-solid:#D8B25A; --gold-soft:#ECD6A0;
+    --bg:#090B12; --surf:#0F121C; --surf-2:#161B29;
+    --text:#EBEEF7; --muted:#98A2BB; --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.06);
+    --good:#38B87F; --warn:#E0AE4A; --crit:#E76F4E;
+  }
+
+  /* Always-dark command-center bands, in both themes */
+  .inverse{
+    --bg:#070810; --surf:#0E111C; --surf-2:#161B2B;
+    --text:#EDEFF7; --muted:#96A0BA; --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.055);
+    --royal:#3E5BF0; --royal-bri:#5D78FF; --gold:#D8B25A; --gold-solid:#D8B25A; --gold-soft:#ECD6A0;
+    --good:#38B87F; --warn:#E0AE4A; --crit:#E76F4E;
+    background:var(--bg); color:var(--text);
+  }
+
+  body{ background:var(--bg); color:var(--text); font-family:var(--sans);
+    font-size:17px; line-height:1.5; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden; }
+
+  .wrap{ max-width:var(--wrap); margin:0 auto; padding:0 28px; }
+  section{ position:relative; }
+  .band{ padding:96px 0; }
+  @media (max-width:760px){ .band{ padding:64px 0; } }
+
+  .eyebrow{ font:600 13px/1 var(--sans); letter-spacing:.19em; text-transform:uppercase;
+    color:var(--royal); display:inline-flex; align-items:center; gap:12px; }
+  .inverse .eyebrow{ color:var(--gold-soft); }
+  .eyebrow::before{ content:""; width:26px; height:2px; background:currentColor; }
+
+  h1,h2,h3{ font-family:var(--serif); font-weight:600; letter-spacing:-.015em; text-wrap:balance; color:var(--text); }
+  h2.head{ font-size:clamp(30px,4.2vw,46px); line-height:1.06; }
+  .lead{ color:var(--muted); font-size:clamp(17px,2vw,21px); line-height:1.5; max-width:60ch; }
+  .mono{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
+
+  a{ color:inherit; text-decoration:none; }
+  .btn{ display:inline-flex; align-items:center; gap:10px; font:600 15.5px var(--sans);
+    padding:14px 24px; border-radius:11px; border:1px solid transparent; cursor:pointer;
+    transition:transform .15s ease, background .15s ease, border-color .15s ease; }
+  .btn:focus-visible{ outline:2px solid var(--royal-bri); outline-offset:3px; }
+  .btn.primary{ background:var(--royal); color:#fff; box-shadow:0 10px 30px -12px var(--royal); }
+  .btn.primary:hover{ background:var(--royal-bri); transform:translateY(-1px); }
+  .btn.ghost{ border-color:var(--line); color:var(--text); background:transparent; }
+  .btn.ghost:hover{ border-color:var(--royal); color:var(--royal); }
+  .inverse .btn.ghost{ color:var(--text); border-color:rgba(255,255,255,.22); }
+  .inverse .btn.ghost:hover{ border-color:var(--gold-soft); color:var(--gold-soft); }
+
+  svg.i{ width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.7;
+    stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ===== NAV ===== */
+  header.nav{ position:sticky; top:0; z-index:60;
+    background:color-mix(in oklab, var(--bg) 82%, transparent);
+    backdrop-filter:blur(12px) saturate(1.2);
+    border-bottom:1px solid var(--line-2); }
+  .nav-in{ max-width:var(--wrap); margin:0 auto; padding:14px 28px;
+    display:flex; align-items:center; justify-content:space-between; gap:20px; }
+  .brand{ display:flex; align-items:center; gap:13px; font:700 24px var(--sans); letter-spacing:-.01em; color:var(--text); }
+  .brand .glyph{ width:46px; height:33px; color:var(--royal); flex:none; }
+  .brand b{ font-weight:700; } .brand .p{ color:var(--gold-solid); }
+  .nav-links{ display:flex; align-items:center; gap:30px; }
+  .nav-links a{ font:600 14.5px var(--sans); color:var(--muted); transition:color .15s; }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-right{ display:flex; align-items:center; gap:14px; }
+  .themetog{ width:38px; height:38px; border-radius:10px; border:1px solid var(--line);
+    background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .themetog:hover{ color:var(--text); border-color:var(--royal); }
+  @media (max-width:900px){ .nav-links{ display:none; } }
+
+  /* ===== HERO ===== */
+  .hero{ position:relative; overflow:hidden; padding:104px 0 92px; }
+  .hero::before{ content:""; position:absolute; inset:0; z-index:0;
+    background:
+      radial-gradient(760px 420px at 78% -8%, color-mix(in oklab,var(--royal) 42%, transparent) 0%, transparent 62%),
+      radial-gradient(680px 520px at 8% 108%, color-mix(in oklab,var(--royal-deep) 60%, transparent) 0%, transparent 60%); }
+  #pulse{ position:absolute; left:0; right:0; bottom:0; width:100%; height:230px; z-index:0; opacity:.9; }
+  .hero .wrap{ position:relative; z-index:2; }
+  .hero-grid{ display:grid; grid-template-columns:1.08fr .92fr; gap:54px; align-items:center; }
+  @media (max-width:960px){ .hero-grid{ grid-template-columns:1fr; gap:40px; } }
+  .hero h1{ font-size:clamp(38px,6vw,66px); line-height:1.02; margin:22px 0 0; max-width:15ch; }
+  .hero h1 .em{ color:var(--gold-soft); font-style:italic; }
+  .hero .lead{ margin-top:22px; color:#C3CBDD; }
+  .hero .cta{ margin-top:34px; display:flex; gap:14px; flex-wrap:wrap; }
+  .trust{ margin-top:26px; display:inline-flex; align-items:center; gap:11px;
+    font:600 14px var(--sans); color:#AEB9CE;
+    background:rgba(216,178,90,.10); border:1px solid rgba(216,178,90,.30);
+    border-radius:30px; padding:9px 17px; }
+  .trust svg.i{ width:18px; height:18px; color:var(--gold-soft); }
+
+  /* floating brief card in hero */
+  .glass{ background:linear-gradient(180deg, rgba(22,27,43,.86), rgba(12,15,26,.92));
+    border:1px solid rgba(255,255,255,.12); border-radius:18px;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.7); overflow:hidden; }
+  .glass .gt{ display:flex; justify-content:space-between; align-items:center;
+    padding:14px 18px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .glass .gt b{ font:600 14.5px var(--sans); color:#EDEFF7; }
+  .glass .gt .when{ font:600 11.5px var(--mono); color:#8794AE; letter-spacing:.02em; }
+  .beatline{ display:flex; align-items:baseline; gap:8px; padding:16px 18px 6px; }
+  .beatline .n{ font:600 34px var(--mono); color:#fff; }
+  .beatline .u{ font:600 12px var(--sans); text-transform:uppercase; letter-spacing:.08em; color:#8794AE; }
+  .beatline .delta{ margin-left:auto; font:600 13px var(--mono); color:var(--good);
+    display:inline-flex; align-items:center; gap:5px; }
+  .miniflags{ padding:6px 18px 16px; display:flex; flex-direction:column; gap:9px; }
+  .mf{ display:flex; align-items:center; gap:10px; font:500 13.5px var(--sans); color:#C6CEDE; }
+  .mf .dot{ width:8px; height:8px; border-radius:50%; flex:none; }
+
+  /* ===== marquee logos / stat strip ===== */
+  .stripe{ border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); background:var(--surf); }
+  .stripe .row{ display:grid; grid-template-columns:repeat(4,1fr); }
+  .stripe .cell{ padding:26px 22px; border-right:1px solid var(--line-2); }
+  .stripe .cell:last-child{ border-right:none; }
+  .stripe .n{ font:600 30px var(--mono); color:var(--text); }
+  .stripe .l{ font:500 13.5px var(--sans); color:var(--muted); margin-top:6px; }
+  @media (max-width:760px){ .stripe .row{ grid-template-columns:repeat(2,1fr); } .stripe .cell:nth-child(2){ border-right:none; } }
+
+  /* ===== PROBLEM ===== */
+  .head-block{ max-width:46ch; }
+  .cards3{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:44px; }
+  @media (max-width:860px){ .cards3{ grid-template-columns:1fr; } }
+  .card{ background:var(--surf); border:1px solid var(--line); border-radius:16px; padding:26px 26px 28px; }
+  .card .ic{ width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:color-mix(in oklab,var(--royal) 14%, transparent); color:var(--royal); margin-bottom:16px; }
+  .card h3{ font-family:var(--sans); font-size:19px; font-weight:700; letter-spacing:-.005em; }
+  .card p{ color:var(--muted); font-size:15.5px; line-height:1.5; margin-top:9px; }
+
+  /* ===== MORNING BRIEF (product hero) ===== */
+  .brief-sec .wrap{ position:relative; z-index:2; }
+  .brief-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:26px; }
+  .tagpill{ display:inline-flex; align-items:center; gap:7px; font:600 11px var(--mono); letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:5px 12px; }
+  .tagpill::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--gold-solid); }
+  .brief{ background:var(--surf); border:1px solid var(--line); border-radius:18px; overflow:hidden;
+    box-shadow:0 40px 90px -46px rgba(0,0,0,.6); }
+  .brief-top{ background:linear-gradient(90deg,var(--royal-deep),var(--royal)); color:#fff;
+    padding:16px 26px; display:flex; justify-content:space-between; align-items:center; }
+  .brief-top b{ font:600 18px var(--sans); }
+  .brief-top .when{ font:600 12.5px var(--mono); color:#C7D2F5; }
+  .units{ display:grid; grid-template-columns:1fr 1fr; }
+  @media (max-width:720px){ .units{ grid-template-columns:1fr; } }
+  .unit{ padding:20px 26px; border-bottom:1px solid var(--line); }
+  .unit:nth-child(odd){ border-right:1px solid var(--line); }
+  .unit .nm{ display:flex; align-items:center; gap:10px; font:700 16px var(--sans); color:var(--text); }
+  .unit .nm .dot{ width:10px; height:10px; border-radius:3px; transform:rotate(45deg); flex:none; }
+  .unit .ms{ display:flex; gap:28px; margin-top:13px; }
+  .unit .m .n{ font:600 22px var(--mono); color:var(--text); }
+  .unit .m .l{ font:600 10.5px var(--sans); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-top:5px; }
+  .unit .flag{ margin-top:14px; font:600 13.5px var(--sans); display:flex; align-items:center; gap:8px; }
+  .unit .flag svg.i{ width:16px; height:16px; flex:none; }
+  .flag.crit{ color:var(--crit); } .flag.warn{ color:var(--warn); } .flag.ok{ color:var(--good); }
+  .brief-foot{ background:var(--surf-2); padding:16px 26px; font:600 15px var(--sans); color:var(--text);
+    display:flex; align-items:center; gap:11px; flex-wrap:wrap; }
+  .brief-foot svg.i{ width:19px; height:19px; color:var(--gold-solid); flex:none; }
+  .brief-foot .todo{ color:var(--royal); }
+  .inverse .brief-foot .todo{ color:var(--gold-soft); }
+
+  /* ===== AGENTS ===== */
+  .agrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:42px; }
+  @media (max-width:980px){ .agrid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){ .agrid{ grid-template-columns:1fr; } }
+  .agent{ background:var(--surf); border:1px solid var(--line); border-radius:15px; padding:22px 22px 24px;
+    transition:border-color .16s ease, transform .16s ease; }
+  .agent:hover{ border-color:var(--royal); transform:translateY(-2px); }
+  .agent .ic{ width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    background:color-mix(in oklab,var(--gold-solid) 18%, transparent); color:var(--gold); margin-bottom:14px; }
+  .inverse .agent .ic{ color:var(--gold-soft); }
+  .agent h3{ font-family:var(--sans); font-size:16.5px; font-weight:700; letter-spacing:-.005em; }
+  .agent p{ color:var(--muted); font-size:14px; line-height:1.45; margin-top:7px; }
+  .agent .give{ margin-top:12px; font:600 12.5px var(--sans); color:var(--good);
+    display:flex; align-items:center; gap:7px; }
+  .agent .give::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--good); }
+  .startnote{ margin-top:26px; display:flex; align-items:center; gap:13px; padding:18px 24px;
+    background:color-mix(in oklab,var(--royal) 9%, var(--surf)); border:1px solid var(--line); border-radius:14px;
+    font:600 17px var(--sans); color:var(--text); }
+  .startnote svg.i{ color:var(--royal); flex:none; }
+  .inverse .startnote svg.i{ color:var(--gold-soft); }
+
+  /* ===== INDUSTRIES ===== */
+  .ind-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:42px; }
+  @media (max-width:860px){ .ind-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:520px){ .ind-grid{ grid-template-columns:1fr; } }
+  .ind{ display:flex; gap:15px; align-items:flex-start; background:var(--surf);
+    border:1px solid var(--line); border-radius:14px; padding:20px 22px; }
+  .ind .ic{ color:var(--royal); flex:none; margin-top:2px; }
+  .inverse .ind .ic{ color:var(--gold-soft); }
+  .ind h3{ font-family:var(--sans); font-size:16px; font-weight:700; }
+  .ind p{ color:var(--muted); font-size:13.5px; line-height:1.45; margin-top:5px; }
+
+  /* ===== PROCESS ===== */
+  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:22px; margin-top:42px; }
+  @media (max-width:860px){ .steps{ grid-template-columns:1fr 1fr; gap:26px; } }
+  @media (max-width:480px){ .steps{ grid-template-columns:1fr; } }
+  .step{ position:relative; }
+  .step .num{ width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font:600 22px var(--mono); background:var(--royal); color:#fff; margin-bottom:16px; }
+  .inverse .step .num{ background:transparent; border:1.5px solid var(--gold-soft); color:var(--gold-soft); }
+  .step h3{ font-family:var(--sans); font-size:18px; font-weight:700; }
+  .step p{ color:var(--muted); font-size:14.5px; line-height:1.5; margin-top:8px; }
+  .reassure{ margin-top:34px; display:inline-flex; align-items:center; gap:12px; flex-wrap:wrap;
+    padding:15px 24px; border-radius:12px; font:600 15.5px var(--sans);
+    background:color-mix(in oklab,var(--good) 12%, transparent); color:var(--good);
+    border:1px solid color-mix(in oklab,var(--good) 34%, transparent); }
+  .reassure svg.i{ width:20px; height:20px; flex:none; }
+
+  /* ===== SECURITY ===== */
+  .sixgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:42px; }
+  @media (max-width:860px){ .sixgrid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:520px){ .sixgrid{ grid-template-columns:1fr; } }
+  .sec{ padding:4px 4px 0; }
+  .sec .ic{ width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.06); border:1px solid var(--line); color:var(--gold-soft); margin-bottom:14px; }
+  .sec h3{ font-family:var(--sans); font-size:17px; font-weight:700; }
+  .sec p{ color:var(--muted); font-size:14.5px; line-height:1.5; margin-top:8px; }
+
+  /* ===== CTA ===== */
+  .cta-sec{ text-align:left; }
+  .cta-grid{ display:grid; grid-template-columns:1.2fr .8fr; gap:44px; align-items:center; }
+  @media (max-width:840px){ .cta-grid{ grid-template-columns:1fr; gap:30px; } }
+  .askbox{ background:rgba(216,178,90,.10); border:1px solid rgba(216,178,90,.30);
+    border-radius:16px; padding:26px 30px; }
+  .askbox p{ font-family:var(--serif); font-size:22px; line-height:1.42; color:var(--text); }
+  .askbox .g{ color:var(--gold-soft); font-weight:600; }
+  .contactcard{ background:var(--surf); border:1px solid var(--line); border-radius:16px; padding:26px; }
+  .contactcard .lbl{ font:600 11px var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .contactcard .v{ font:600 18px var(--sans); color:var(--text); margin:6px 0 18px; }
+  .contactcard .v a{ color:var(--royal); } .inverse .contactcard .v a{ color:var(--gold-soft); }
+  .trustline{ display:flex; gap:22px; flex-wrap:wrap; margin-top:26px; }
+  .trustline span{ display:flex; align-items:center; gap:8px; font:600 14px var(--sans); color:var(--muted); }
+  .trustline svg.i{ width:18px; height:18px; color:var(--gold-soft); }
+
+  /* ===== FOOTER ===== */
+  footer{ background:var(--surf); border-top:1px solid var(--line); padding:44px 0 40px; }
+  .foot-in{ display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; }
+  .foot-in .brand{ font-size:17px; }
+  .foot-links{ display:flex; gap:26px; flex-wrap:wrap; }
+  .foot-links a{ font:600 14px var(--sans); color:var(--muted); } .foot-links a:hover{ color:var(--text); }
+  .foot-note{ color:var(--muted); font-size:13px; margin-top:22px; }
+
+  /* reveal */
+  .rv{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+  .rv.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce){ .rv{ opacity:1; transform:none; transition:none; } }
+</style>
+
+<!-- ===== NAV ===== -->
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="CommandPulse home">
+      <svg class="glyph" viewBox="0 0 60 40" fill="none" aria-hidden="true">
+        <path d="M2 22h11l5-14 7 26 5-16 4 8h8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="55" cy="22" r="3.4" fill="currentColor"/>
+      </svg>
+      <span><b>Command</b><span class="p">Pulse</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#brief">The Brief</a>
+      <a href="#agents">Agents</a>
+      <a href="#industries">Industries</a>
+      <a href="#process">How it works</a>
+      <a href="#security">Security</a>
+    </nav>
+    <div class="nav-right">
+      <button class="themetog" id="themeToggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <a class="btn primary" href="#contact">Book a pilot</a>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero inverse" id="top">
+  <canvas id="pulse" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">AI operations for multi-unit owners</span>
+        <h1>Feel the <span class="em">pulse</span> of every business you own.</h1>
+        <p class="lead">CommandPulse puts done-for-you AI agents on top of the systems you already run, then rolls your whole operation into one brief every morning. You run five companies. You should be able to read them like one.</p>
+        <div class="cta">
+          <a class="btn primary" href="#contact">Book a 30-day pilot</a>
+          <a class="btn ghost" href="#brief">See the Morning Brief</a>
+        </div>
+        <div class="trust">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.6-3 7.7-7 9-4-1.3-7-4.4-7-9V6l7-3z"/><path d="M8.7 12l2.2 2.2 4.4-4.4"/></svg>
+          Your data stays yours. Your passwords stay with you.
+        </div>
+      </div>
+      <div class="glass rv" aria-hidden="false">
+        <div class="gt"><b>Your operation · Daily Brief</b><span class="when">TUE 6:00 AM</span></div>
+        <div class="beatline">
+          <span class="n" id="beatN">$1.03M</span><span class="u">across 4 units</span>
+          <span class="delta"><svg class="i" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M6 15l6-6 6 6"/></svg>4.1%</span>
+        </div>
+        <div class="miniflags">
+          <div class="mf"><span class="dot" style="background:var(--crit)"></span>3 accounts slipping, worth a call today</div>
+          <div class="mf"><span class="dot" style="background:var(--warn)"></span>1 license renewal due in 27 days</div>
+          <div class="mf"><span class="dot" style="background:var(--good)"></span>2 new placements landed overnight</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STAT STRIP ===== -->
+<div class="stripe">
+  <div class="wrap">
+    <div class="row">
+      <div class="cell"><div class="n mono">1</div><div class="l">Brief every morning, your whole portfolio on one screen</div></div>
+      <div class="cell"><div class="n mono">30 days</div><div class="l">To a clear number on your first agent, or you walk</div></div>
+      <div class="cell"><div class="n mono">0</div><div class="l">Passwords stored. Access you grant, and revoke in a click</div></div>
+      <div class="cell"><div class="n mono">No</div><div class="l">Platform to buy, IT project, or lock-in</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROBLEM ===== -->
+<section class="band" id="problem">
+  <div class="wrap">
+    <div class="head-block rv">
+      <span class="eyebrow">The real problem</span>
+      <h2 class="head" style="margin-top:16px">Run enough businesses and the trouble hides in the totals.</h2>
+      <p class="lead" style="margin-top:14px">The numbers look fine at a glance. The damage is one layer down, in the account that quietly went dark, the hours your best people burn on busywork, and the four systems that never talk to each other.</p>
+    </div>
+    <div class="cards3">
+      <div class="card rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 8-9"/><path d="M17 6h4v4"/></svg></div>
+        <h3>Silent churn</h3>
+        <p>An account trims its orders and starts buying from someone else. On hundreds of accounts, that drop hides inside the totals until the customer is already gone.</p>
+      </div>
+      <div class="card rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg></div>
+        <h3>Hours lost to busywork</h3>
+        <p>Re-keying orders, chasing receivables, replying to reviews, building the month-end pack. Skilled people spend the day on work a system should be doing.</p>
+      </div>
+      <div class="card rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="7" rx="1.5"/><rect x="13" y="4" width="8" height="7" rx="1.5"/><rect x="3" y="14" width="8" height="6" rx="1.5"/><rect x="13" y="14" width="8" height="6" rx="1.5"/></svg></div>
+        <h3>Numbers scattered everywhere</h3>
+        <p>Accounting in one place, the field app in another, distributor portals, a stack of inboxes. Nobody sees the whole picture in one place, so nobody acts on it in time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MORNING BRIEF ===== -->
+<section class="band brief-sec inverse" id="brief">
+  <div class="wrap">
+    <div class="brief-head rv">
+      <div>
+        <span class="eyebrow">The daily payoff</span>
+        <h2 class="head" style="margin-top:16px">One brief every morning. Your whole operation on one screen.</h2>
+      </div>
+      <span class="tagpill">Sample brief · illustrative</span>
+    </div>
+    <div class="brief rv">
+      <div class="brief-top"><b>Your Companies · Daily Brief</b><span class="when">Tuesday, July 14 · 6:00 AM</span></div>
+      <div class="units">
+        <div class="unit">
+          <div class="nm"><span class="dot" style="background:var(--royal-bri)"></span> Northgate Distribution</div>
+          <div class="ms">
+            <div class="m"><div class="n">$842K</div><div class="l">Sales</div></div>
+            <div class="m"><div class="n">1,214</div><div class="l">Orders shipped</div></div>
+            <div class="m"><div class="n">97.2%</div><div class="l">Fill rate</div></div>
+          </div>
+          <div class="flag crit"><svg class="i" viewBox="0 0 24 24"><path d="M12 3.5l9.2 16H2.8l9.2-16z"/><path d="M12 10v4.5"/><path d="M12 17.6h.01"/></svg> 3 accounts slipping · $61K newly past due</div>
+        </div>
+        <div class="unit">
+          <div class="nm"><span class="dot" style="background:var(--good)"></span> Harbor Wholesale Grocery</div>
+          <div class="ms">
+            <div class="m"><div class="n">$188K</div><div class="l">Cash &amp; carry</div></div>
+            <div class="m"><div class="n">604</div><div class="l">Tickets</div></div>
+            <div class="m"><div class="n">Tobacco</div><div class="l">Top category</div></div>
+          </div>
+          <div class="flag ok"><svg class="i" viewBox="0 0 24 24"><path d="M4.5 12.5l4.5 4.5 10.5-11"/></svg> Running ahead of last Tuesday</div>
+        </div>
+        <div class="unit">
+          <div class="nm"><span class="dot" style="background:var(--gold-solid)"></span> Cedar Hospitality Group</div>
+          <div class="ms">
+            <div class="m"><div class="n">78%</div><div class="l">Occupancy</div></div>
+            <div class="m"><div class="n">$141</div><div class="l">ADR</div></div>
+            <div class="m"><div class="n">$110</div><div class="l">RevPAR</div></div>
+          </div>
+          <div class="flag warn"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v10.5H9.5L5 20V5z"/><path d="M8 9h8M8 12h5"/></svg> 14 new guest reviews · 1 needs a reply</div>
+        </div>
+        <div class="unit">
+          <div class="nm"><span class="dot" style="background:#7A4C6B"></span> Summit Home Services</div>
+          <div class="ms">
+            <div class="m"><div class="n">38</div><div class="l">Jobs booked</div></div>
+            <div class="m"><div class="n">$612</div><div class="l">Avg ticket</div></div>
+            <div class="m"><div class="n">27 days</div><div class="l">To license renewal</div></div>
+          </div>
+          <div class="flag warn"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg> 2 quotes still unsent after 48 hours</div>
+        </div>
+      </div>
+      <div class="brief-foot">
+        <svg class="i" viewBox="0 0 24 24"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg>
+        <span class="todo">3 things need you today:</span> call 3 slipping stores · approve 1 review reply · start 1 license renewal
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AGENTS ===== -->
+<section class="band" id="agents">
+  <div class="wrap">
+    <div class="head-block rv">
+      <span class="eyebrow">The toolkit</span>
+      <h2 class="head" style="margin-top:16px">A small team of agents, each doing one job well.</h2>
+      <p class="lead" style="margin-top:14px">Every agent works on top of the systems you already trust, drafts the work, and flags what needs you. Together they feed the one brief you read each morning.</p>
+    </div>
+    <div class="agrid">
+      <div class="agent rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 6-3 7-3 7h18s-3-1-3-7z"/><path d="M10.4 20a2 2 0 0 0 3.2 0"/></svg></div>
+        <h3>Early-Warning</h3>
+        <p>Flags accounts slipping before they leave, while there is still time to call.</p>
+        <div class="give">Protects revenue you already have</div>
+      </div>
+      <div class="agent rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.4 11.4h10.2L20 8H6.2"/></svg></div>
+        <h3>Order-Intake</h3>
+        <p>Turns calls, texts and emails into clean orders in your system.</p>
+        <div class="give">Fewer errors, less re-keying</div>
+      </div>
+      <div class="agent rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7"/><path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg></div>
+        <h3>AR &amp; Collections</h3>
+        <p>Watches aging daily and sends the polite follow-ups nobody has time for.</p>
+        <div class="give">Cash in the door faster</div>
+      </div>
+      <div class="agent rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3.5 11.5l8-8 9 9-8 8-9-9z"/><circle cx="9" cy="9" r="1.5"/></svg></div>
+        <h3>Rebate-Recovery</h3>
+        <p>Tracks scan-data, buy-downs and rebate programs line by line.</p>
+        <div class="give">Captures money left on the table</div>
+      </div>
+      <div class="agent rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v10.5H9.5L5 20V5z"/><path d="M8 9h8M8 12h5"/></svg></div>
+        <h3>Review-Response</h3>
+        <p>Drafts on-brand replies to guest and customer reviews for one-click approval.</p>
+        <div class="give">Higher scores, hours saved</div>
+      </div>
+      <div class="agent rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 16.5h6"/></svg></div>
+        <h3>Owner-Report Drafter</h3>
+        <p>Builds the month-end package and the variance story that goes with it.</p>
+        <div class="give">Days of work down to a review</div>
+      </div>
+      <div class="agent rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M9 3v4M15 3v4"/></svg></div>
+        <h3>Compliance Calendar</h3>
+        <p>Watches registrations, renewals, labels and filings so nothing lapses.</p>
+        <div class="give">No surprise deadlines</div>
+      </div>
+      <div class="agent rv">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M2 12h4l2-6 4 12 3-9 2 3h5"/></svg></div>
+        <h3>The Morning Brief</h3>
+        <p>Rolls every agent into one screen before your coffee is cold.</p>
+        <div class="give">Your whole operation, one place</div>
+      </div>
+    </div>
+    <div class="startnote rv">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6L12 3z"/></svg>
+      We start with one agent, aimed at your biggest pain. We add the next only once the last has earned its place.
+    </div>
+  </div>
+</section>
+
+<!-- ===== INDUSTRIES ===== -->
+<section class="band inverse" id="industries">
+  <div class="wrap">
+    <div class="head-block rv">
+      <span class="eyebrow">Built to tailor</span>
+      <h2 class="head" style="margin-top:16px">One playbook, fitted to the business in front of it.</h2>
+      <p class="lead" style="margin-top:14px">The agents are the same. What changes is the work they watch. Here is where CommandPulse is already pointed.</p>
+    </div>
+    <div class="ind-grid">
+      <div class="ind rv"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3 6h11v9H3z"/><path d="M14 9h3.5l3 3v3H14z"/><circle cx="7" cy="17.5" r="1.7"/><circle cx="17.5" cy="17.5" r="1.7"/></svg></span><div><h3>Distribution &amp; Wholesale</h3><p>Slipping accounts, order intake, receivables, rebate capture.</p></div></div>
+      <div class="ind rv"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg></span><div><h3>Hotels &amp; Hospitality</h3><p>Reviews, daily flash, owner reporting, brand audit prep.</p></div></div>
+      <div class="ind rv"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M10 3h4v2.5l1.3 3.2V20a1 1 0 0 1-1 1H9.7a1 1 0 0 1-1-1V8.7L10 5.5z"/><path d="M9 12.5h6"/></svg></span><div><h3>Beverage &amp; Consumer Brands</h3><p>Distributor follow-up, velocity, dormant accounts, compliance.</p></div></div>
+      <div class="ind rv"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 20v-6l8-8 8 8v6"/><path d="M9 20v-5h6v5"/><path d="M14 6l4-3"/></svg></span><div><h3>Home Services (HVAC &amp; Construction)</h3><p>Unsent quotes, job flow, AR, license and permit calendar.</p></div></div>
+      <div class="ind rv"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 9h16l-1.2 10.5a1.5 1.5 0 0 1-1.5 1.3H6.7a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/></svg></span><div><h3>Restaurants &amp; Groups</h3><p>Daily sales roll-up, reviews, labor and ordering signals.</p></div></div>
+      <div class="ind rv"><span class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><div><h3>Multi-Unit Retail</h3><p>Per-location performance, shrink flags, one portfolio view.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROCESS ===== -->
+<section class="band" id="process">
+  <div class="wrap">
+    <div class="head-block rv">
+      <span class="eyebrow">How we start</span>
+      <h2 class="head" style="margin-top:16px">One win. Thirty days. One clear number.</h2>
+      <p class="lead" style="margin-top:14px">No platform to buy and no big software project. We pick the one thing wasting the most time and prove it pays.</p>
+    </div>
+    <div class="steps">
+      <div class="step rv"><div class="num">1</div><h3>Pick the pain</h3><p>Together we choose the workflow that costs you the most. Most owners start with the early-warning agent.</p></div>
+      <div class="step rv"><div class="num">2</div><h3>We build and run it</h3><p>Done-for-you. You grant scoped access, we handle the setup and the daily work.</p></div>
+      <div class="step rv"><div class="num">3</div><h3>You see the number</h3><p>Accounts saved, hours returned, dollars collected, measured against a clear baseline.</p></div>
+      <div class="step rv"><div class="num">4</div><h3>Expand, or don't</h3><p>We add the next agent only if the last one earned it. You are never locked in.</p></div>
+    </div>
+    <div class="reassure rv">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 7.7-7 9-4-1.3-7-4.4-7-9V6l7-3z"/><path d="M8.7 12l2.2 2.2 4.4-4.4"/></svg>
+      Low risk · No big IT project · No lock-in · Cancel any time
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECURITY ===== -->
+<section class="band inverse" id="security">
+  <div class="wrap">
+    <div class="head-block rv">
+      <span class="eyebrow">Security, in plain English</span>
+      <h2 class="head" style="margin-top:16px">Built so you never have to worry about your data.</h2>
+    </div>
+    <div class="sixgrid">
+      <div class="sec rv"><div class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><h3>Your logins stay yours</h3><p>We connect only through access you grant and can revoke instantly. We never hold or store your passwords.</p></div>
+      <div class="sec rv"><div class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/><path d="M8 7.5h.01M8 16.5h.01"/></svg></div><h3>Your data stays home</h3><p>We read what a task needs and leave it where it lives. Nothing is warehoused offsite by us.</p></div>
+      <div class="sec rv"><div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 7.7-7 9-4-1.3-7-4.4-7-9V6l7-3z"/><path d="M8.7 12l2.2 2.2 4.4-4.4"/></svg></div><h3>Never trains AI</h3><p>Business-grade AI, contractually barred from training on or retaining your information.</p></div>
+      <div class="sec rv"><div class="ic"><svg class="i" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.3"/><path d="M4 20c0-3.4 2.7-6 6-6 1.3 0 2.6.4 3.6 1.1"/><path d="M15.6 18l1.9 1.9 3.9-3.9"/></svg></div><h3>Human on the money</h3><p>Agents draft and flag. Your people approve anything that touches cash or a customer.</p></div>
+      <div class="sec rv"><div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M2 12s3.6-6.2 10-6.2S22 12 22 12s-3.6 6.2-10 6.2S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg></div><h3>You see everything</h3><p>Every action is logged in plain English, so you always know what was done and why.</p></div>
+      <div class="sec rv"><div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v7"/><path d="M7.6 7.3a7 7 0 1 0 8.8 0"/></svg></div><h3>No lock-in</h3><p>Turn any agent off, any day. It is a service that earns its keep, not a cage.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="band inverse cta-sec" id="contact">
+  <div class="wrap">
+    <div class="cta-grid">
+      <div class="rv">
+        <span class="eyebrow">The ask</span>
+        <h2 class="head" style="margin-top:16px;max-width:20ch">Let's run one pilot and let the results do the talking.</h2>
+        <div class="askbox" style="margin-top:24px">
+          <p>Tell us the one thing wasting the most of your team's time. <span class="g">We build the fix and show you the number in 30 days.</span></p>
+        </div>
+        <div class="trustline">
+          <span><svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> Passwords stay with you</span>
+          <span><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/></svg> Data stays home</span>
+          <span><svg class="i" viewBox="0 0 24 24"><path d="M12 4v7"/><path d="M7.6 7.3a7 7 0 1 0 8.8 0"/></svg> Always in your control</span>
+        </div>
+      </div>
+      <div class="contactcard rv">
+        <div class="lbl">Email</div>
+        <div class="v"><a href="mailto:hello@commandpulse.ai">hello@commandpulse.ai</a></div>
+        <div class="lbl">Direct line</div>
+        <div class="v"><a href="tel:+15867194513">586-719-4513</a></div>
+        <a class="btn primary" href="mailto:hello@commandpulse.ai" style="width:100%; justify-content:center">Start the conversation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <a class="brand" href="#top">
+        <svg class="glyph" viewBox="0 0 60 40" fill="none" aria-hidden="true">
+          <path d="M2 22h11l5-14 7 26 5-16 4 8h8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="55" cy="22" r="3.4" fill="currentColor"/>
+        </svg>
+        <span><b>Command</b><span class="p">Pulse</span></span>
+      </a>
+      <div class="foot-links">
+        <a href="#brief">The Brief</a>
+        <a href="#agents">Agents</a>
+        <a href="#industries">Industries</a>
+        <a href="#process">How it works</a>
+        <a href="#security">Security</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="foot-note">CommandPulse.ai · One brief every morning. &nbsp;·&nbsp; © 2026 CommandPulse. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  /* theme toggle */
+  (function(){
+    var root=document.documentElement;
+    try{ var saved=localStorage.getItem('cp-theme'); if(saved) root.setAttribute('data-theme',saved); }catch(e){}
+    document.getElementById('themeToggle').addEventListener('click',function(){
+      var cur=root.getAttribute('data-theme');
+      if(!cur){ cur=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }
+      var next=cur==='dark'?'light':'dark';
+      root.setAttribute('data-theme',next);
+      try{ localStorage.setItem('cp-theme',next); }catch(e){}
+    });
+  })();
+
+  /* scroll reveal */
+  (function(){
+    var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var els=document.querySelectorAll('.rv');
+    if(reduce||!('IntersectionObserver'in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target); } });
+    },{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(e){ io.observe(e); });
+  })();
+
+  /* hero pulse waveform */
+  (function(){
+    var c=document.getElementById('pulse'); if(!c) return;
+    var ctx=c.getContext('2d'), dpr=Math.min(window.devicePixelRatio||1,2);
+    var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var W,H;
+    function size(){ W=c.clientWidth; H=c.clientHeight; c.width=W*dpr; c.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+    size(); window.addEventListener('resize',size);
+    // one heartbeat unit as offsets from baseline (x fraction, y offset)
+    function beat(t){
+      // t in [0,1) within a segment; return vertical offset
+      var y=0;
+      var spikes=[[0.50,0.06],[0.54,-0.9],[0.58,0.5],[0.62,0]];
+      // small ambient wiggle
+      y=Math.sin(t*Math.PI*2)*0.04;
+      if(t>0.48&&t<0.63){
+        // sharp QRS complex
+        var p=(t-0.48)/0.15;
+        if(p<0.25) y=-(p/0.25)*0.15;
+        else if(p<0.5) y=-0.15+((p-0.25)/0.25)*1.15;      // up spike
+        else if(p<0.75) y=1.0-((p-0.5)/0.25)*1.35;         // down
+        else y=-0.35+((p-0.75)/0.25)*0.35;
+      }
+      return y;
+    }
+    var off=0;
+    function frame(){
+      ctx.clearRect(0,0,W,H);
+      var mid=H*0.62, amp=H*0.34, seg=W/2.2;
+      var grad=ctx.createLinearGradient(0,0,W,0);
+      grad.addColorStop(0,'rgba(94,120,255,0)');
+      grad.addColorStop(0.15,'rgba(94,120,255,0.9)');
+      grad.addColorStop(0.85,'rgba(94,120,255,0.9)');
+      grad.addColorStop(1,'rgba(216,178,90,0.95)');
+      ctx.lineWidth=2.4; ctx.strokeStyle=grad; ctx.lineJoin='round'; ctx.lineCap='round';
+      ctx.beginPath();
+      var lastX=0,lastY=mid;
+      for(var x=0;x<=W;x+=2){
+        var t=((x+off)%seg)/seg;
+        var y=mid - beat(t)*amp;
+        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        lastX=x; lastY=y;
+      }
+      ctx.stroke();
+      // glow endpoint dot near the freshest beat
+      ctx.fillStyle='rgba(216,178,90,0.95)';
+      ctx.beginPath(); ctx.arc(lastX,lastY,3.2,0,Math.PI*2); ctx.fill();
+      if(!reduce){ off+=1.1; requestAnimationFrame(frame); }
+    }
+    frame();
+  })();
+</script>
+</body>
+</html>
