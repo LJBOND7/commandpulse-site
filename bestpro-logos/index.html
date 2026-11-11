@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Best Pro Brand Vote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,800;1,800&family=Inter:wght@400;600&family=Montserrat:wght@200;300&family=Nunito:wght@800&family=Playfair+Display:wght@700&display=swap">
+<style>
+:root { --bg:#eef2f7; --fg:#0f2f5c; --muted:#4a5d78; --plate:#fff; --line:#cfd8e4; --orange:#d9541a; --blue:#1766b5; --pick:#f26a21;
+  --display:"Archivo","Arial Black",Arial,sans-serif; --body:"Inter",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
+* { box-sizing: border-box; }
+html, body { overflow-x:hidden; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.55; }
+.wrap { max-width:1180px; margin:0 auto; padding:36px 16px 140px; }
+.eyebrow { font-family:var(--display); font-weight:500; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--orange); }
+h1 { font-family:var(--display); font-weight:800; font-size:clamp(30px,5vw,50px); line-height:1.05; margin:8px 0 12px; }
+.rules { display:flex; gap:8px; margin-bottom:14px; } .rules i { display:block; height:4px; width:56px; background:var(--orange); } .rules i+i { background:var(--blue); }
+p { margin:0 0 10px; max-width:68ch; } .muted { color:var(--muted); }
+.steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr)); gap:10px; margin:18px 0 0; padding:0; list-style:none; counter-reset:s; }
+.steps li { background:var(--plate); border:1px solid var(--line); border-radius:6px; padding:10px 14px; font-size:15px; counter-increment:s; }
+.steps li::before { content:counter(s); font-family:var(--display); font-weight:800; color:var(--blue); margin-right:8px; }
+section { margin-top:44px; padding-top:28px; border-top:1px solid var(--line); }
+h2 { font-family:var(--display); font-weight:800; font-size:28px; margin:0 0 4px; }
+h3 { font-family:var(--display); font-weight:800; font-size:17px; margin:26px 0 10px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:16px; }
+.grid.big { grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr)); }
+.card { position:relative; display:flex; flex-direction:column; text-align:left; font:inherit; color:inherit; background:var(--plate); border:2px solid var(--line); border-radius:8px; padding:0; cursor:pointer; overflow:hidden; transition:border-color .12s, box-shadow .12s; }
+.card:hover { border-color:#9fb2cc; }
+.card:focus-visible { outline:3px solid var(--blue); outline-offset:2px; }
+.card[aria-pressed="true"] { border-color:var(--pick); box-shadow:0 0 0 3px rgba(242,106,33,.25); }
+.card { min-width:0; width:100%; }
+.card .art { position:relative; display:block; background:#fff; aspect-ratio:3/2; width:100%; }
+.card .art.navy { background:#0a1f3d; }
+.card .art img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:6px; }
+.card .art.photo img { object-fit:cover; padding:0; }
+.card .cap { display:flex; gap:10px; align-items:baseline; padding:10px 14px 12px; border-top:1px solid var(--line); }
+.card .id { font-family:var(--display); font-weight:800; font-size:20px; color:var(--blue); min-width:1.9em; }
+.card .nm { font-weight:600; font-size:15px; }
+.badge { position:absolute; top:10px; right:10px; background:var(--pick); color:#fff; font-family:var(--display); font-weight:800; font-size:14px; border-radius:999px; padding:5px 12px; display:none; }
+.card[aria-pressed="true"] .badge { display:block; }
+.font .art { aspect-ratio:auto; display:flex; align-items:center; justify-content:center; padding:30px 16px; flex-direction:column; gap:6px; color:#0f2f5c; text-align:center; }
+.font .w { font-size:clamp(30px,6vw,42px); line-height:1; }
+.font .s { font-family:"Montserrat",Arial,sans-serif; font-weight:300; font-size:10px; letter-spacing:.3em; }
+.f1 .w { font-family:"Archivo",Arial,sans-serif; font-weight:800; font-style:italic; }
+.f2 .w { font-family:"Archivo",Arial,sans-serif; font-weight:800; }
+.f3 .w { font-family:"Nunito",Arial,sans-serif; font-weight:800; }
+.f4 .w { font-family:"Montserrat",Arial,sans-serif; font-weight:300; letter-spacing:.04em; }
+.f5 .w { font-family:"Montserrat",Arial,sans-serif; font-weight:200; letter-spacing:.28em; font-size:clamp(24px,5vw,34px); }
+.f6 .w { font-family:"Playfair Display",Georgia,serif; font-weight:700; letter-spacing:.06em; }
+.vid { background:var(--plate); border:2px solid var(--line); border-radius:8px; overflow:hidden; }
+.vid.on { border-color:var(--pick); box-shadow:0 0 0 3px rgba(242,106,33,.25); }
+.vid video { display:block; width:100%; background:#000; }
+.vid .row { display:flex; gap:12px; align-items:center; justify-content:space-between; padding:12px 14px; flex-wrap:wrap; }
+.btn { font:inherit; font-family:var(--display); font-weight:800; font-size:15px; border:2px solid var(--fg); background:#fff; color:var(--fg); border-radius:6px; padding:10px 16px; cursor:pointer; min-height:44px; }
+.btn[aria-pressed="true"] { background:var(--pick); border-color:var(--pick); color:#fff; }
+.form { display:grid; gap:14px; max-width:560px; }
+label { font-weight:600; display:grid; gap:6px; }
+input, textarea { font:inherit; padding:12px; border:1px solid #9fb2cc; border-radius:6px; background:#fff; color:var(--fg); width:100%; }
+textarea { min-height:90px; resize:vertical; }
+.submit { font-family:var(--display); font-weight:800; font-size:18px; background:var(--fg); color:#fff; border:0; border-radius:6px; padding:14px 22px; cursor:pointer; min-height:48px; }
+.submit:disabled { opacity:.5; cursor:not-allowed; }
+.msg { font-weight:600; min-height:1.5em; } .msg.err { color:#b3261e; } .msg.ok { color:#14703a; }
+.bar { position:fixed; left:0; right:0; bottom:0; background:var(--fg); color:#fff; padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px)); z-index:5; }
+.bar .in { max-width:1180px; margin:0 auto; display:flex; gap:8px 18px; flex-wrap:wrap; align-items:center; font-size:14px; }
+.bar b { font-family:var(--display); } .bar .k { opacity:.75; } .bar a { color:#fff; margin-left:auto; font-weight:600; }
+.done { background:var(--plate); border:2px solid #14703a; border-radius:8px; padding:24px; max-width:640px; }
+[hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Best Pro Heating &amp; Air Conditioning</span>
+    <h1>Help choose the new look of Best Pro</h1>
+    <div class="rules"><i></i><i></i></div>
+    <p>We are building the new Best Pro brand and your vote counts. It takes about three minutes. There are no wrong answers. Go with your gut and picture each one on a van in your neighbor's driveway.</p>
+    <p class="muted">What we want the brand to say: we are always moving forward, we are dependable, and we are a family-first company that takes care of our neighbors and the air their families breathe.</p>
+    <ol class="steps"><li>Tap up to 3 logos, favorite first</li><li>Pick the lettering</li><li>Pick the animation</li><li>Pick a shirt, polo and van</li><li>Add your name and send</li></ol>
+  </header>
+
+  <section id="logos">
+    <h2>1. Logos</h2>
+    <p class="muted">Tap up to three. The first one you tap is your top choice. Tap again to remove it.</p>
+    <div id="logo-groups"></div>
+  </section>
+
+  <section id="fonts">
+    <h2>2. Lettering</h2>
+    <p class="muted">Forget the pictures for a moment. Which style of lettering feels most like Best Pro?</p>
+    <div class="grid" id="font-grid"></div>
+  </section>
+
+  <section id="anims">
+    <h2>3. Logo animation</h2>
+    <p class="muted">This plays at the end of videos and presentations. Turn your sound on, watch both, then pick one. The final logo gets swapped in once it is chosen.</p>
+    <div class="grid big">
+      <div class="vid" data-anim="navy"><video controls playsinline preload="none" poster="img/poster-navy.jpg" src="video/navy.mp4"></video>
+        <div class="row"><span class="nm"><b>Fire and ice</b></span><button type="button" class="btn" data-pick="animation" data-val="navy" aria-pressed="false">Pick this one</button></div></div>
+      <div class="vid" data-anim="white"><video controls playsinline preload="none" poster="img/poster-white.jpg" src="video/white.mp4"></video>
+        <div class="row"><span class="nm"><b>Studio</b></span><button type="button" class="btn" data-pick="animation" data-val="white" aria-pressed="false">Pick this one</button></div></div>
+    </div>
+  </section>
+
+  <section id="kit">
+    <h2>4. Shirts, polos and vans</h2>
+    <p class="muted">Pick one of each. Judge the colors and layout, not the logo on them. The winning logo goes on whichever you choose.</p>
+    <h3>T-shirt</h3><div class="grid big" id="tee-grid"></div>
+    <h3>Polo</h3><div class="grid big" id="polo-grid"></div>
+    <h3>Van</h3><div class="grid big" id="van-grid"></div>
+  </section>
+
+  <section id="send">
+    <h2>5. Send your vote</h2>
+    <form class="form" id="form" novalidate>
+      <label for="name">Your name<input id="name" name="name" autocomplete="name" maxlength="60" required></label>
+      <label for="comment">Anything you want to add? (optional)<textarea id="comment" name="comment" maxlength="1000" placeholder="What you liked, what you would change, an idea we missed"></textarea></label>
+      <div><button class="submit" id="submit" type="submit">Send my vote</button></div>
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    </form>
+    <div class="done" id="done" hidden><h2>Thank you. Your vote is in.</h2><p>If you change your mind, vote again with the same name and only your latest vote will count.</p></div>
+  </section>
+</div>
+
+<div class="bar"><div class="in"><span><span class="k">Logos</span> <b id="b-logo">none yet</b></span><span><span class="k">Lettering</span> <b id="b-font">-</b></span><span><span class="k">Animation</span> <b id="b-anim">-</b></span><span><span class="k">Shirt / Polo / Van</span> <b id="b-kit">-</b></span><a href="#send">Send vote</a></div></div>
+
+<script>
+const API = 'https://bestpro-logo-vote.vercel.app/api/vote';
+const GROUPS = [
+  ['First round', [['A','Classic'],['B','Simplified'],['C','Stacked badge'],['D','Shield']]],
+  ['The shield, simplified', [['D1','Shield with sun'],['D2','Shield with flame'],['D3','Stacked, sun','sq'],['D4','Stacked, flame','sq'],['D5','On navy','navy']]],
+  ['More directions', [['G','Forward arrow'],['H','BP monogram'],['I','Wordmark only'],['J','Crew patch','sq'],['K','Home comfort']]],
+  ['Logos that tell our story', [['M1','Home shield, rising arrow'],['M2','Heart in the shield'],['M3','Family under the roof'],['M4','Arrow in the name'],['M5','Home in good hands'],['M6','Sunrise over the neighborhood','sq']]],
+  ['Family first', [['F1','Heart around the home'],['F2','Family in the shield'],['F3','Three under one roof'],['F4','Heart in hand'],['F5','Front porch','sq'],['F6','One line']]],
+  ['Thinner lettering, big-company styles', [['S1','Modern minimal'],['S2','Forward underline'],['S3','Monogram'],['S5','Heritage serif']]],
+];
+const FONTS = [['bold-italic','Bold italic','f1','BEST PRO'],['bold-upright','Bold upright','f2','BEST PRO'],['friendly','Friendly rounded','f3','Best Pro'],['thin-lower','Thin lowercase','f4','best pro'],['thin-caps','Thin spaced capitals','f5','BEST PRO'],['serif','Classic serif','f6','BEST PRO']];
+const KIT = {
+  tee: [['T1','Navy'],['T2','Heather gray'],['T3','Safety orange']],
+  polo: [['P1','Navy'],['P2','White'],['P3','Bright blue']],
+  van: [['V1','White with swoosh'],['V2','Full navy'],['V3','Orange and blue split'],['V4','White over navy']],
+};
+const state = { logos: [], font: null, animation: null, tee: null, polo: null, van: null };
+const $ = (s) => document.querySelector(s);
+const el = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content.firstChild; };
+
+const lg = $('#logo-groups');
+for (const [title, items] of GROUPS) {
+  lg.appendChild(el(`<h3>${title}</h3>`));
+  const g = el('<div class="grid"></div>');
+  for (const [id, name, flag] of items) {
+    const c = el(`<button type="button" class="card" data-logo="${id}" aria-pressed="false"><span class="badge"></span><span class="art ${flag === 'navy' ? 'navy' : ''}"><img loading="lazy" src="img/${id}.png" alt="Logo option ${id}: ${name}"></span><span class="cap"><span class="id">${id}</span><span class="nm">${name}</span></span></button>`);
+    c.addEventListener('click', () => toggleLogo(id));
+    g.appendChild(c);
+  }
+  lg.appendChild(g);
+}
+const fg = $('#font-grid');
+for (const [id, name, cls, sample] of FONTS) {
+  const c = el(`<button type="button" class="card font ${cls}" data-pick="font" data-val="${id}" aria-pressed="false"><span class="badge">Picked</span><span class="art"><span class="w">${sample}</span><span class="s">HEATING &amp; AIR CONDITIONING</span></span><span class="cap"><span class="nm">${name}</span></span></button>`);
+  fg.appendChild(c);
+}
+for (const k of Object.keys(KIT)) {
+  const g = $(`#${k}-grid`);
+  for (const [id, name] of KIT[k]) g.appendChild(el(`<button type="button" class="card" data-pick="${k}" data-val="${id}" aria-pressed="false"><span class="badge">Picked</span><span class="art photo"><img loading="lazy" src="img/kit-${id}.jpg" alt="${k} option ${id}: ${name}"></span><span class="cap"><span class="id">${id}</span><span class="nm">${name}</span></span></button>`));
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-pick]'); if (!b) return;
+  const k = b.dataset.pick; state[k] = state[k] === b.dataset.val ? null : b.dataset.val; render();
+});
+function toggleLogo(id) {
+  const i = state.logos.indexOf(id);
+  if (i >= 0) state.logos.splice(i, 1);
+  else if (state.logos.length < 3) state.logos.push(id);
+  else { flash('You already have three logos. Tap one of your picks to remove it first.', true); return; }
+  render();
+}
+const ORD = ['1st choice', '2nd choice', '3rd choice'];
+function render() {
+  document.querySelectorAll('[data-logo]').forEach((c) => { const i = state.logos.indexOf(c.dataset.logo); c.setAttribute('aria-pressed', i >= 0); c.querySelector('.badge').textContent = i >= 0 ? ORD[i] : ''; });
+  document.querySelectorAll('[data-pick]').forEach((b) => { const on = state[b.dataset.pick] === b.dataset.val; b.setAttribute('aria-pressed', on); if (b.classList.contains('btn')) { b.textContent = on ? 'Picked' : 'Pick this one'; b.closest('.vid').classList.toggle('on', on); } });
+  $('#b-logo').textContent = state.logos.length ? state.logos.join(', ') : 'none yet';
+  $('#b-font').textContent = state.font ? FONTS.find((f) => f[0] === state.font)[1] : '-';
+  $('#b-anim').textContent = state.animation ? (state.animation === 'navy' ? 'Fire and ice' : 'Studio') : '-';
+  $('#b-kit').textContent = [state.tee, state.polo, state.van].map((x) => x || '-').join(' / ');
+  try { localStorage.setItem('bp-vote-draft', JSON.stringify(state)); } catch (e) {}
+}
+function flash(t, err) { const m = $('#msg'); m.textContent = t; m.className = 'msg ' + (err ? 'err' : 'ok'); if (err) m.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+try { const d = JSON.parse(localStorage.getItem('bp-vote-draft') || 'null'); if (d) Object.assign(state, d); const n = localStorage.getItem('bp-vote-name'); if (n) $('#name').value = n; } catch (e) {}
+render();
+$('#form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = $('#name').value.trim();
+  if (!state.logos.length) return flash('Please pick at least one logo before sending.', true);
+  if (!name) return flash('Please enter your name so we count your vote once.', true);
+  const missing = [['font', 'lettering'], ['animation', 'animation'], ['tee', 't-shirt'], ['polo', 'polo'], ['van', 'van']].filter(([k]) => !state[k]).map(([, n]) => n);
+  if (missing.length && !$('#form').dataset.warned) { $('#form').dataset.warned = '1'; return flash('You have not picked: ' + missing.join(', ') + '. Scroll up to add them, or press Send again to send without them.', true); }
+  const btn = $('#submit'); btn.disabled = true; flash('Sending...', false);
+  try {
+    const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...state, name, comment: $('#comment').value }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || 'Could not save your vote. Please try again.');
+    try { localStorage.setItem('bp-vote-name', name); } catch (e) {}
+    $('#form').hidden = true; $('#done').hidden = false; $('#done').scrollIntoView({ block: 'center' });
+  } catch (err) { flash(err.message || 'Could not save your vote. Please check your connection and try again.', true); btn.disabled = false; }
+});
+</script>
+</body>
+</html>
