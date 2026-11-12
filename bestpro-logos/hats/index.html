@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Best Pro Hat Vote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,800;1,800&family=Inter:wght@400;600&display=swap">
+<style>
+:root { --bg:#eef2f7; --fg:#0f2f5c; --muted:#4a5d78; --plate:#fff; --line:#cfd8e4; --orange:#d9541a; --blue:#1766b5; --pick:#f26a21;
+  --display:"Archivo","Arial Black",Arial,sans-serif; --body:"Inter",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
+* { box-sizing:border-box; }
+html, body { overflow-x:hidden; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.55; }
+.wrap { max-width:1180px; margin:0 auto; padding:36px 16px 140px; }
+.eyebrow { font-family:var(--display); font-weight:500; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--orange); }
+h1 { font-family:var(--display); font-weight:800; font-style:italic; font-size:clamp(30px,5vw,50px); line-height:1.05; margin:8px 0 12px; }
+.rules { display:flex; gap:8px; margin-bottom:14px; } .rules i { display:block; height:4px; width:56px; background:var(--orange); } .rules i+i { background:var(--blue); }
+p { margin:0 0 10px; max-width:68ch; } .muted { color:var(--muted); }
+section { margin-top:40px; padding-top:26px; border-top:1px solid var(--line); }
+h2 { font-family:var(--display); font-weight:800; font-size:28px; margin:0 0 4px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:16px; margin-top:16px; }
+.card { position:relative; display:flex; flex-direction:column; min-width:0; width:100%; text-align:left; font:inherit; color:inherit; background:var(--plate); border:2px solid var(--line); border-radius:8px; padding:0; overflow:hidden; }
+button.card { cursor:pointer; transition:border-color .12s, box-shadow .12s; }
+button.card:hover { border-color:#9fb2cc; }
+button.card:focus-visible { outline:3px solid var(--blue); outline-offset:2px; }
+button.card[aria-pressed="true"] { border-color:var(--pick); box-shadow:0 0 0 3px rgba(242,106,33,.25); }
+.card img { display:block; width:100%; aspect-ratio:4/3; object-fit:cover; }
+.cap { display:flex; flex-direction:column; gap:2px; padding:10px 14px 12px; border-top:1px solid var(--line); }
+.cap b { font-family:var(--display); font-weight:800; font-size:17px; } .cap b span { color:var(--blue); margin-right:8px; }
+.cap small { color:var(--muted); font-size:14px; }
+.badge { position:absolute; top:10px; left:10px; background:var(--pick); color:#fff; font-family:var(--display); font-weight:800; font-size:13px; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
+form { display:grid; gap:14px; max-width:560px; margin-top:16px; }
+label { display:grid; gap:6px; font-weight:600; }
+input, textarea { font:inherit; color:inherit; background:var(--plate); border:2px solid var(--line); border-radius:6px; padding:10px 12px; width:100%; }
+input:focus, textarea:focus { outline:3px solid rgba(23,102,181,.35); border-color:var(--blue); }
+.send { font-family:var(--display); font-weight:800; font-size:18px; color:#fff; background:var(--orange); border:0; border-radius:6px; padding:14px 22px; cursor:pointer; justify-self:start; }
+.send:disabled { opacity:.5; cursor:default; }
+.msg { font-weight:600; min-height:1.5em; } .msg.err { color:#b3261e; } .msg.ok { color:#1b7a3d; }
+.bar { position:fixed; left:0; right:0; bottom:0; background:var(--fg); color:#fff; padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px)); font-weight:600; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Best Pro Heating &amp; Air Conditioning</div>
+  <h1>Pick your hat</h1>
+  <div class="rules"><i></i><i></i></div>
+  <p>You asked for hats, so here are six built on the two logos the team picked: the shield and the crew patch. Tap up to two. The first one you tap is your top choice. Then type your name and send.</p>
+  <p class="muted">These are concept mockups. Small details in the artwork will be cleaned up before anything is ordered.</p>
+
+  <section>
+    <h2>Hats</h2>
+    <p class="muted">Tap up to two. Tap again to remove one.</p>
+    <div class="grid" id="hats">
+      <button type="button" class="card" data-id="H1" aria-pressed="false"><img src="img/H1.jpg" alt="Navy trucker hat with the round crew patch on the front"><span class="cap"><b><span>H1</span>Navy trucker</b><small>Crew patch on the front</small></span></button>
+      <button type="button" class="card" data-id="H2" aria-pressed="false"><img src="img/H2.jpg" alt="Trucker hat with white front, navy mesh and the shield logo"><span class="cap"><b><span>H2</span>White front trucker</b><small>Shield with slanted lettering</small></span></button>
+      <button type="button" class="card" data-id="H3" aria-pressed="false"><img src="img/H3.jpg" alt="Charcoal trucker hat with a leather crew patch"><span class="cap"><b><span>H3</span>Charcoal trucker</b><small>Crew patch in leather</small></span></button>
+      <button type="button" class="card" data-id="H4" aria-pressed="false"><img src="img/H4.jpg" alt="Safety orange cap with the shield on front and crew patch on the side"><span class="cap"><b><span>H4</span>Safety orange cap</b><small>Shield on front, crew patch on the side</small></span></button>
+      <button type="button" class="card" data-id="H5" aria-pressed="false"><img src="img/H5.jpg" alt="Navy knit beanie with the crew patch on the cuff"><span class="cap"><b><span>H5</span>Navy beanie</b><small>Crew patch on the cuff</small></span></button>
+      <button type="button" class="card" data-id="H6" aria-pressed="false"><img src="img/H6.jpg" alt="Navy low-profile cap with a small shield logo"><span class="cap"><b><span>H6</span>Navy low-profile cap</b><small>Small shield with slanted lettering</small></span></button>
+    </div>
+  </section>
+
+  <section>
+    <h2>The shirt layout</h2>
+    <p class="muted">Nothing to vote on here. This is where the logos are going: the shield on the left chest and the crew patch on the right sleeve. Use the comment box if you have thoughts.</p>
+    <div class="grid">
+      <div class="card"><img src="img/S3.jpg" alt="Navy t-shirt with the shield on the left chest and crew patch on the right sleeve"><span class="cap"><b>Navy tee</b></span></div>
+      <div class="card"><img src="img/S4.jpg" alt="Safety orange t-shirt with the shield on the left chest and crew patch on the right sleeve"><span class="cap"><b>Safety orange tee</b></span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Send your vote</h2>
+    <form id="f" novalidate>
+      <label for="name">Your name<input id="name" name="name" autocomplete="name" maxlength="60" required></label>
+      <label for="comment">Anything else? (optional)<textarea id="comment" name="comment" rows="3" maxlength="1000" placeholder="A color or style we missed, fit, anything"></textarea></label>
+      <button class="send" id="send" type="submit">Send my vote</button>
+      <div class="msg" id="msg" role="status"></div>
+    </form>
+  </section>
+</div>
+<div class="bar" id="bar">Tap up to two hats</div>
+<script>
+const API = 'https://bestpro-logo-vote.vercel.app/api/hat-vote';
+const picks = [];
+const cards = [...document.querySelectorAll('#hats .card')];
+const bar = document.getElementById('bar'), msg = document.getElementById('msg'), send = document.getElementById('send');
+function render() {
+  cards.forEach((c) => {
+    const i = picks.indexOf(c.dataset.id);
+    c.setAttribute('aria-pressed', i >= 0 ? 'true' : 'false');
+    let b = c.querySelector('.badge');
+    if (i >= 0) { if (!b) { b = document.createElement('span'); b.className = 'badge'; c.append(b); } b.textContent = i === 0 ? 'Top choice' : '2nd choice'; }
+    else if (b) b.remove();
+  });
+  bar.textContent = picks.length ? 'Your picks: ' + picks.join(', then ') : 'Tap up to two hats';
+}
+cards.forEach((c) => c.addEventListener('click', () => {
+  const id = c.dataset.id, i = picks.indexOf(id);
+  if (i >= 0) picks.splice(i, 1);
+  else if (picks.length < 2) picks.push(id);
+  else { msg.className = 'msg err'; msg.textContent = 'You can pick two. Tap one of your picks to remove it first.'; return; }
+  msg.textContent = '';
+  render();
+}));
+document.getElementById('f').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  if (!picks.length) { msg.className = 'msg err'; msg.textContent = 'Please tap at least one hat.'; return; }
+  if (!name) { msg.className = 'msg err'; msg.textContent = 'Please enter your name.'; return; }
+  send.disabled = true; msg.className = 'msg'; msg.textContent = 'Sending...';
+  try {
+    const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, hats: picks, comment: document.getElementById('comment').value }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || 'Could not save your vote. Please try again.');
+    msg.className = 'msg ok'; msg.textContent = 'Thank you, ' + name + '. Your vote is in. Voting again under the same name replaces it.';
+  } catch (err) { msg.className = 'msg err'; msg.textContent = err.message; }
+  send.disabled = false;
+});
+</script>
+</body>
+</html>
