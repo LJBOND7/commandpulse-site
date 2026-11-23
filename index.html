@@ -652,9 +652,25 @@
       <p class="small-label"><span class="copper-rule"></span> Plan a first workflow</p>
       <h2 id="closing-title">Where does your<br><em>workday run over?</em></h2>
       <p>Bring us one task that follows you home. We’ll map the handoffs, find the part your team can automate, and agree on a way to measure the difference.</p>
-      <a class="btn light-btn" id="contact-email" href="mailto:hello@commandpulse.ai?subject=Let%E2%80%99s%20map%20a%20workflow">Email CommandPulse</a>
-      <span class="contact-address">hello@commandpulse.ai</span>
+      <span class="contact-address">Or email <a href="mailto:hello@commandpulse.ai?subject=Let%E2%80%99s%20map%20a%20workflow" id="contact-email">hello@commandpulse.ai</a></span>
     </div>
+    <form class="wrap lead-form" id="lead-form" action="https://commandpulse-leads.snapdragon-pediatrician.workers.dev/lead" method="post" novalidate aria-labelledby="lead-form-title">
+      <h3 id="lead-form-title">Request an AI automation visit</h3>
+      <p class="lead-form-note">A local specialist comes to you. Fields marked * are needed.</p>
+      <div class="lead-grid">
+        <label>Name *<input name="name" type="text" autocomplete="name" required maxlength="120"></label>
+        <label>Company<input name="company" type="text" autocomplete="organization" maxlength="160"></label>
+        <label>Email *<input name="email" type="email" autocomplete="email" required maxlength="200"></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+        <label>Industry<select name="industry"><option value="">Choose one</option><option>Property management</option><option>HVAC</option><option>Roofing</option><option>General contracting</option><option>Public adjusting</option><option>Trucking</option><option>Dance studio</option><option>Nightclub or venue</option><option>Multi-unit operator</option><option>Other</option></select></label>
+        <label>City or ZIP<input name="location" type="text" autocomplete="postal-code" maxlength="120"></label>
+        <label class="lead-wide">What task follows you home?<textarea name="message" rows="3" maxlength="3000"></textarea></label>
+        <label class="lead-trap" aria-hidden="true">Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <button class="btn light-btn" type="submit">Request a visit</button>
+      <p class="lead-status" role="status" aria-live="polite"></p>
+      <noscript><p class="lead-form-note">This form needs JavaScript. Please email hello@commandpulse.ai instead.</p></noscript>
+    </form>
   </section>
 </main>
 <footer class="page-foot">

@@ -72,3 +72,42 @@
   motion.addEventListener('change', () => { if (motion.matches) watch.pause(); });
   watch.preload='auto'; watch.src=watch.dataset.src;
 })();
+
+// Lead form: posts to the CommandPulse lead service and confirms in place.
+(() => {
+  const form = document.getElementById('lead-form');
+  if (!form) return;
+  const status = form.querySelector('.lead-status');
+  const button = form.querySelector('button[type="submit"]');
+  let source = 'Contact form';
+  document.addEventListener('click', event => {
+    const link = event.target.closest && event.target.closest('a[href="#contact"]');
+    if (link) source = link.classList.contains('day-cta') ? 'Film button' : 'Header or page link';
+  });
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const name = form.elements.name, email = form.elements.email;
+    const badName = !data.name.trim(), badEmail = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim());
+    name.setAttribute('aria-invalid', String(badName));
+    email.setAttribute('aria-invalid', String(badEmail));
+    if (badName || badEmail) {
+      status.textContent = badName ? 'Please add your name.' : 'Please check your email address.';
+      (badName ? name : email).focus();
+      return;
+    }
+    data.source = source;
+    button.disabled = true;
+    status.textContent = 'Sending…';
+    try {
+      const response = await fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.error || 'failed');
+      form.setAttribute('data-sent', '');
+      status.textContent = `Thank you, ${data.name.trim().split(/\s+/)[0]}. Your request is in, and a CommandPulse specialist will be in touch to set up your visit.`;
+    } catch (_) {
+      button.disabled = false;
+      status.textContent = 'That didn’t send. Please try again, or email hello@commandpulse.ai.';
+    }
+  });
+})();

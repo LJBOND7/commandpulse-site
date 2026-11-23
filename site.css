@@ -158,3 +158,29 @@ button { cursor:pointer; }
  .mobile-links a { padding:.6rem 0; }
 }
 @media (max-width:700px) { .operator-grid { grid-template-columns:minmax(0,1fr); } }
+
+/* lead form */
+.contact-address a { color:inherit; }
+.lead-form { margin-top:0; padding:clamp(1.3rem,2.4vw,2.2rem); background:rgba(11,15,24,.9); border:1px solid #3a4560; border-top:3px solid var(--copper); backdrop-filter:blur(10px); }
+.lead-form h3 { margin:0; font:400 clamp(1.7rem,2.3vw,2.4rem)/1.05 var(--serif); letter-spacing:-.03em; }
+.lead-form-note { margin:.5rem 0 1.1rem; color:#c9c3ba; font-size:.9rem; }
+.lead-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.9rem 1rem; margin-bottom:1.2rem; }
+.lead-grid label { display:grid; gap:.35rem; color:#d7d0c8; font:500 .74rem/1.3 var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+.lead-wide { grid-column:1/-1; }
+.lead-grid input,.lead-grid select,.lead-grid textarea { width:100%; box-sizing:border-box; min-height:2.9rem; padding:.65rem .75rem; border:1px solid #4a5674; border-radius:3px; background:#0d1220; color:var(--ink); font:400 1rem/1.4 var(--sans); letter-spacing:normal; text-transform:none; }
+.lead-grid textarea { resize:vertical; }
+.lead-grid input:focus-visible,.lead-grid select:focus-visible,.lead-grid textarea:focus-visible { outline:2px solid var(--copper); outline-offset:1px; border-color:var(--copper); }
+.lead-grid [aria-invalid="true"] { border-color:#ff8f7a; }
+.lead-trap { position:absolute !important; left:-200vw; width:1px; height:1px; overflow:hidden; }
+.lead-form button { border:0; cursor:pointer; font-family:inherit; }
+.lead-form button[disabled] { opacity:.6; cursor:progress; }
+.lead-status { margin:.9rem 0 0; min-height:1.4em; font-size:.98rem; color:#ffd7ba; }
+.lead-form[data-sent] .lead-grid,.lead-form[data-sent] button,.lead-form[data-sent] .lead-form-note { display:none; }
+.lead-form[data-sent] .lead-status { color:#9be7b9; font-size:1.15rem; }
+@media (min-width:961px) {
+  .closing { grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:center; padding-block:4rem; }
+  .closing .closing-content { width:auto; margin:0 0 0 max(clamp(20px,4.5vw,80px), calc((100vw - 1296px) / 2)); padding-block:1rem; }
+  .closing .lead-form { width:auto; margin:0 max(clamp(20px,4.5vw,80px), calc((100vw - 1296px) / 2)) 0 2rem; }
+}
+@media (max-width:960px) { .lead-form { margin-bottom:3rem; } }
+@media (max-width:520px) { .lead-grid { grid-template-columns:1fr; } }
