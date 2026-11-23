@@ -82,7 +82,7 @@
   let source = 'Contact form';
   document.addEventListener('click', event => {
     const link = event.target.closest && event.target.closest('a[href="#contact"]');
-    if (link) source = link.classList.contains('day-cta') ? 'Film button' : 'Header or page link';
+    if (link) source = link.dataset.source || (link.classList.contains('day-cta') ? 'Film button' : 'Header or page link');
   });
   form.addEventListener('submit', async event => {
     event.preventDefault();
