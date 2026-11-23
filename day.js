@@ -38,7 +38,7 @@
       from: minutes(el.dataset.from), to: minutes(el.dataset.to),
       fx: el.dataset.fx || '',
       typed: text, full: text ? text.dataset.text : '',
-      duration: 0, loaded: false, last: -1
+      duration: 0, loaded: false, tries: 0, last: -1
     };
   });
 
@@ -59,16 +59,28 @@
     if (minHand) minHand.style.transform = `rotate(${total / 60 * 360}deg)`;
   };
 
-  const load = d => {
-    if (d.loaded || !d.video) return;
-    d.loaded = true;
-    const v = d.video;
-    v.addEventListener('loadedmetadata', () => { d.duration = v.duration || 0; });
-    v.addEventListener('loadeddata', () => { d.el.setAttribute('data-video-ready', ''); d.last = -1; target = -1; requestTick(); });
-    v.addEventListener('error', () => { d.el.removeAttribute('data-video-ready'); });
-    v.preload = 'auto';
-    v.src = `assets/day/${d.el.dataset.clip}.mp4`;
-    v.load();
+  // Clips are fetched whole, two at a time, nearest the reader first. A streaming
+  // <video> holds its connection open, and browsers allow only a handful per site,
+  // so loading every clip the page glides past would leave the later ones waiting.
+  data.forEach(d => {
+    if (!d.video) return;
+    d.video.addEventListener('loadedmetadata', () => { d.duration = d.video.duration || 0; });
+    d.video.addEventListener('loadeddata', () => { d.el.setAttribute('data-video-ready', ''); d.last = -1; target = -1; requestTick(); });
+    d.video.addEventListener('error', () => { d.el.removeAttribute('data-video-ready'); });
+  });
+  let inflight = 0;
+  const pump = () => {
+    if (mode !== 'scroll' || inflight >= 2) return;
+    const at = Math.floor(clamp(target < 0 ? current : target, 0, N - 0.0001));
+    const d = [at, at + 1, at - 1, at + 2, at + 3].map(n => data[n]).find(x => x && x.video && !x.loaded && x.tries < 2);
+    if (!d) return;
+    d.loaded = true; d.tries += 1; inflight += 1;
+    fetch(`assets/day/${d.el.dataset.clip}.mp4`)
+      .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.blob(); })
+      .then(blob => { d.video.preload = 'auto'; d.video.src = URL.createObjectURL(blob); d.video.load(); })
+      .catch(() => { d.loaded = false; })
+      .finally(() => { inflight -= 1; pump(); });
+    pump();
   };
   const seek = (d, p) => {
     if (!d.duration) return;
@@ -131,7 +143,7 @@
         seek(d, 1);
       }
     });
-    [i - 1, i, i + 1, i + 2].forEach(n => { if (data[n]) load(data[n]); });
+    pump();
 
     // the clock runs with the clip, and spins between scenes while the next one drops
     const d = data[i], prev = data[i - 1];
